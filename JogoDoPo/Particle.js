@@ -12,13 +12,15 @@ class Particle {
     }
 
     update(entities, itSelf) {
+        // Só fazer o update se estiver em contato com o ar
+
         // Add (acceleration to velocity) or/and (velocity to position) only if the particle wouldn't pass through
         // 1. another particle - check which particles would go through and teleport to 1 pixel above the highest particle in that x-axis
         // 2. the wall - teleport to 1 pixel above wall
         // (in this order)
+        // Why? If it would compare to the walls first, the particle would teleport directly to 1 pixel above it, and maybe occupy the same space of another particle
 
         if (this.checkParticlesCollision(entities, itSelf)) {
-            // this.teleportToHighest(entities, itSelf);
             this.moveToBelow(entities, itSelf);
         } else {
             if (this.checkWallCollision()) {
@@ -86,27 +88,4 @@ class Particle {
             this.position.y++;
         }
     }
-
-    // teleportToHighest(entities, itSelf) {
-    //     // No canvas, quanto menor o Y, mais alta a partícula está
-    //     let mais_alto = 9999;
-
-
-    //     for (let i = 0; i < entities.length; i++) {
-    //         // Só verificar as partículas que estão na mesma linha vertical
-    //         if (entities[i].position.x == this.position.x) {
-    //             // Ignorar a si mesma
-    //             if (i == itSelf) {
-
-    //             } else {
-    //                 // Se há uma partícula mais alta (que tem o Y menor)
-
-    //                 if (entities[i].position.y < mais_alto) {
-    //                     mais_alto = entities[i].position.y;
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     this.position.y = mais_alto - 1;
-    // }
 }
