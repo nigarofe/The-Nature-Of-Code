@@ -58,8 +58,8 @@ class Particle {
                     // Se ela ultrapassasse a outra, haveria uma colisão
                     if (this.acceleration.y + this.velocity.y + this.position.y >= entities[i].position.y) {
                         collisionDetected = true;
+                        break;
                     }
-
                 }
             }
         }
