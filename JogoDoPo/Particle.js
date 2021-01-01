@@ -18,7 +18,8 @@ class Particle {
         // (in this order)
 
         if (this.checkParticlesCollision(entities, itSelf)) {
-            // teleportToHighest();
+            // this.teleportToHighest(entities, itSelf);
+            this.moveToBelow(entities, itSelf);
         } else {
             if (this.checkWallCollision()) {
                 this.position.y = height - 1;
@@ -62,4 +63,48 @@ class Particle {
         }
         return collisionDetected;
     }
+
+    moveToBelow(entities, itSelf) {
+        let somethingIsBelow = false;
+        for (let i = 0; i < entities.length; i++) {
+            // Só verificar as partículas que estão na mesma linha vertical
+            if (entities[i].position.x == this.position.x) {
+                // Ignorar a si mesma
+                if (i == itSelf) {
+
+                } else {
+                    if (entities[i].position.y == this.position.y + 1) {
+                        somethingIsBelow = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (!somethingIsBelow) {
+            this.position.y++;
+        }
+    }
+
+    // teleportToHighest(entities, itSelf) {
+    //     // No canvas, quanto menor o Y, mais alta a partícula está
+    //     let mais_alto = 9999;
+
+
+    //     for (let i = 0; i < entities.length; i++) {
+    //         // Só verificar as partículas que estão na mesma linha vertical
+    //         if (entities[i].position.x == this.position.x) {
+    //             // Ignorar a si mesma
+    //             if (i == itSelf) {
+
+    //             } else {
+    //                 // Se há uma partícula mais alta (que tem o Y menor)
+
+    //                 if (entities[i].position.y < mais_alto) {
+    //                     mais_alto = entities[i].position.y;
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     this.position.y = mais_alto - 1;
+    // }
 }
