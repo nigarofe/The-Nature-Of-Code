@@ -48,16 +48,18 @@ class Particle {
     checkParticlesCollision(entities, itSelf) {
         let collisionDetected = false;
         for (let i = 0; i < entities.length; i++) {
-            // Ignorar a si mesma
-            if (i == itSelf) {
+            // Só verificar as partículas que estão acima das outras
+            if (this.position.y < entities[i].position.y && this.position.x == entities[i].position.x) {
+                // Ignorar a si mesma
+                if (i == itSelf) {
 
-            } else {
-                // Só verificar as partículas que estão acima das outras
-                if (this.position.y < entities[i].position.y && this.position.x == entities[i].position.x) {
+                } else {
+
                     // Se ela ultrapassasse a outra, haveria uma colisão
                     if (this.acceleration.y + this.velocity.y + this.position.y >= entities[i].position.y) {
                         collisionDetected = true;
                     }
+
                 }
             }
         }
