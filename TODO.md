@@ -1,0 +1,6 @@
+- [ ] Example 1.10: Accelerating towards the mouse. p.79
+- [ ] Solar system creation
+- [ ] Bouncing Helium balllon
+- [ ] O jogo do pó - Adicionar massa
+- [ ] Multiple balls - weight, gravity, wind
+- [ ] Ventilador de bolinhas no chão - weight, mass, gravity, wind

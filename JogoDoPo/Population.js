@@ -31,8 +31,6 @@ class Population {
                 }
             }
         }
-
-        console.log(this.entities.length)
     }
 
     // addEntity(x, y) {

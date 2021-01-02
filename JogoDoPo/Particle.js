@@ -6,12 +6,13 @@ class Particle {
     }
 
     draw() {
-        //strokeWeight(10);
+        strokeWeight(1);
         stroke(255);
         point(this.position.x, this.position.y);
     }
 
     update(entities, itSelf) {
+
         // Só fazer o update se estiver em contato com o ar
 
         // Add (acceleration to velocity) or/and (velocity to position) only if the particle wouldn't pass through
@@ -87,5 +88,9 @@ class Particle {
         if (!somethingIsBelow) {
             this.position.y++;
         }
+    }
+    isStuck() {
+        // Matrix could make this function work
+        return true;
     }
 }
