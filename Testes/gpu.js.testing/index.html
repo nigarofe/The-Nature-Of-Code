@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="Gpu.js"></script>
+</head>
+
+<body>
+    <script>
+        let gpu = new GPU();
+        let x = new Array();
+
+        for (let i = 0; i < 999999; i++) {
+            x[i] = Math.random();
+        }
+
+
+        let aFunc = gpu.createKernel(function(x) {
+            let result = 0;
+            if (32 < 45) {
+                if (12 > 3) {
+                    if (5 == 5) {
+                        result += x[this.thread.x] * x[this.thread.x];
+                    }
+                }
+            }
+
+            return result;
+        }).setOutput([x.length]);
+
+        console.log(x)
+
+        let t0 = performance.now();
+        let y = aFunc(x);
+        let t1 = performance.now();
+        console.log(t1 - t0);
+
+
+
+
+
+
+
+
+
+
+
+        let anotherFunc = function(x) {
+            let result = new Array();
+            let i = 0;
+            while (i < x.length) {
+                if (32 < 45) {
+                    if (12 > 3) {
+                        if (5 == 5) {
+                            result[i] = x[i] * x[i];
+                        }
+                    }
+                }
+                i++;
+            }
+            return result;
+        }
+        let t2 = performance.now();
+        let y2 = anotherFunc(x);
+        let t3 = performance.now();
+        console.log(t3 - t2);
+    </script>
+</body>
+
+</html>
