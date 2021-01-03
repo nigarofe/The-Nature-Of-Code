@@ -1,4 +1,15 @@
-let time = 0;
+function drawOptimizationRectangles() {
+    for (let i = 0; i < optimizationRectangles.length; i++) {
+        if (optimizationVisible) {
+            stroke(random(255));
+            strokeWeight(1);
+        }
+        fill(255)
+        rect(optimizationRectangles[i][0], optimizationRectangles[i][1], inc, inc);
+    }
+    // inc = Math.round(optimizationRectangles.length);
+}
+
 
 class Population {
     constructor() {
@@ -21,22 +32,38 @@ class Population {
             this.entities[i].active = this.checkSides(i);
 
             if (this.entities[i].active) {
+                this.entities[i].needToDraw = true;
                 let newVelX = this.entities[i].velX + this.entities[i].accX;
                 let newVelY = this.entities[i].velY + this.entities[i].accY;
                 let newPosX = Math.round(this.entities[i].posX + newVelX);
                 let newPosY = Math.round(this.entities[i].posY + newVelY);
 
                 // Se existe uma partícula entre a posição antiga e a nova posição, teleportar para cima dela
-                let result = this.checkBetween(newPosX, this.entities[i].posY, newPosY);
-                if (result != -1) {
+
+                let resultBaixo = this.checkBetweenDown(newPosX, this.entities[i].posY, newPosY);
+                let resultCima = this.checkBetweenUp(newPosX, this.entities[i].posY, newPosY);
+
+                if (resultBaixo != -1) {
+                    // Olhando para baixo
                     this.matrix[this.entities[i].posY][this.entities[i].posX] = 0;
-                    this.entities[i].posY = result - 1;
+                    this.entities[i].posY = resultBaixo - 1;
+                    this.matrix[this.entities[i].posY][this.entities[i].posX] = 1;
+                } else if (resultCima != -1) {
+                    // Olhando para cima
+                    this.matrix[this.entities[i].posY][this.entities[i].posX] = 0;
+                    this.entities[i].posY = resultCima + 1;
                     this.matrix[this.entities[i].posY][this.entities[i].posX] = 1;
                 } else {
                     // Se for atravessar o chão, não mexer
                     if (newPosY >= height) {
                         this.matrix[this.entities[i].posY][this.entities[i].posX] = 0;
                         this.entities[i].posY = height - 1;
+                        this.matrix[this.entities[i].posY][this.entities[i].posX] = 1;
+
+                        // Se for atravessar o teto, não mexer
+                    } else if (newPosY < 0) {
+                        this.matrix[this.entities[i].posY][this.entities[i].posX] = 0;
+                        this.entities[i].posY = 0;
                         this.matrix[this.entities[i].posY][this.entities[i].posX] = 1;
                     } else {
                         // Senão, prosseguir normalmente
@@ -53,10 +80,12 @@ class Population {
 
             }
         }
-        this.optimizeGraphics();
+        // if (frameCount % 30 == 0) {
+        //     this.optimizeGraphics();
+        // }
     }
 
-    checkBetween(x, oldY, newY) {
+    checkBetweenDown(x, oldY, newY) {
         if (newY >= height) {
             newY = height - 1;
         }
@@ -68,10 +97,26 @@ class Population {
         return -1;
     }
 
+    checkBetweenUp(x, oldY, newY) {
+        if (newY < 0) {
+            newY = 0
+        }
+        for (let i = oldY - 1; i >= newY; i--) {
+            if (this.matrix[i][x] != 0) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     checkSides(i) {
-        //Parte de cima
-        if (this.matrix[this.entities[i].posY - 1][this.entities[i].posX] != 1) {
-            return true;
+
+        // Cuidado com a borda de cima
+        if (this.entities[i].posY - 1 >= 0) {
+            //Parte de cima
+            if (this.matrix[this.entities[i].posY - 1][this.entities[i].posX] != 1) {
+                return true;
+            }
         }
 
         // Cuidado com a borda de baixo
@@ -95,7 +140,7 @@ class Population {
     }
 
     optimizeGraphics() {
-        let inc = 10;
+        optimizationRectangles = new Array();
         // console.log(this.matrix.length + " - " + height)
         // console.log(this.matrix[0].length + " - " + width)
 
@@ -119,8 +164,7 @@ class Population {
                     fill(255, 0, 0, 10);
                     // rect(i, j, i + inc, j + inc)
                 } else {
-                    fill(0, 255, 0, 100);
-                    //rect(i, j, i + inc, j + inc)
+
 
                     for (let k = i; k < i + inc; k++) {
                         for (let l = j; l < j + inc; l++) {
@@ -136,6 +180,13 @@ class Population {
                             }
                         }
                     }
+
+                    // fill(255, 255, 0);
+                    // rect(i, j, inc, inc)
+                    let coords = new Array();
+                    coords.push(i);
+                    coords.push(j);
+                    optimizationRectangles.push(coords)
                 }
             }
         }
