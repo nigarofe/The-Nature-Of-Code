@@ -17,38 +17,129 @@ class Population {
     render() {
         for (let i = 0; i < this.entities.length; i++) {
             this.entities[i].draw();
-            let newVelX = this.entities[i].velX + this.entities[i].accX;
-            let newVelY = this.entities[i].velY + this.entities[i].accY;
-            let newPosX = Math.round(this.entities[i].posX + newVelX);
-            let newPosY = Math.round(this.entities[i].posY + newVelY);
 
-            // Se existe uma partícula entre a posição antiga e a nova posição, teleportar para cima dela
-            let result = this.checkBetween(newPosX, this.entities[i].posY, newPosY);
-            if (result != false) {
-                this.matrix[this.entities[i].posY][this.entities[i].posX] = 0;
-                this.entities[i].posY = result - 1;
-                this.matrix[this.entities[i].posY][this.entities[i].posX] = 1;
-            } else {
-                // Se for atravessar o chão, não mexer
-                if (newPosY >= height) {
+            this.entities[i].active = this.checkSides(i);
+
+            if (this.entities[i].active) {
+                let newVelX = this.entities[i].velX + this.entities[i].accX;
+                let newVelY = this.entities[i].velY + this.entities[i].accY;
+                let newPosX = Math.round(this.entities[i].posX + newVelX);
+                let newPosY = Math.round(this.entities[i].posY + newVelY);
+
+                // Se existe uma partícula entre a posição antiga e a nova posição, teleportar para cima dela
+                let result = this.checkBetween(newPosX, this.entities[i].posY, newPosY);
+                if (result != -1) {
                     this.matrix[this.entities[i].posY][this.entities[i].posX] = 0;
-                    this.entities[i].posY = height - 1;
+                    this.entities[i].posY = result - 1;
                     this.matrix[this.entities[i].posY][this.entities[i].posX] = 1;
                 } else {
-                    // Senão, prosseguir normalmente
-                    this.matrix[this.entities[i].posY][this.entities[i].posX] = 0;
+                    // Se for atravessar o chão, não mexer
+                    if (newPosY >= height) {
+                        this.matrix[this.entities[i].posY][this.entities[i].posX] = 0;
+                        this.entities[i].posY = height - 1;
+                        this.matrix[this.entities[i].posY][this.entities[i].posX] = 1;
+                    } else {
+                        // Senão, prosseguir normalmente
+                        this.matrix[this.entities[i].posY][this.entities[i].posX] = 0;
 
-                    this.entities[i].velX = newVelX;
-                    this.entities[i].velY = newVelY;
-                    this.entities[i].posX = newPosX;
-                    this.entities[i].posY = newPosY;
+                        this.entities[i].velX = newVelX;
+                        this.entities[i].velY = newVelY;
+                        this.entities[i].posX = newPosX;
+                        this.entities[i].posY = newPosY;
 
-                    this.matrix[newPosY][newPosX] = 1;
+                        this.matrix[newPosY][newPosX] = 1;
+                    }
+                }
+
+            }
+        }
+        this.optimizeGraphics();
+    }
+
+    checkBetween(x, oldY, newY) {
+        if (newY >= height) {
+            newY = height - 1;
+        }
+        for (let i = oldY + 1; i <= newY; i++) {
+            if (this.matrix[i][x] != 0) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    checkSides(i) {
+        //Parte de cima
+        if (this.matrix[this.entities[i].posY - 1][this.entities[i].posX] != 1) {
+            return true;
+        }
+
+        // Cuidado com a borda de baixo
+        if (this.entities[i].posY + 1 < height) {
+            // Parte de baixo
+            if (this.matrix[this.entities[i].posY + 1][this.entities[i].posX] != 1) {
+                return true;
+            }
+        }
+
+        // Parte da direita
+        if (this.matrix[this.entities[i].posY][this.entities[i].posX + 1] != 1 || this.matrix[this.entities[i].posY][this.entities[i].posX + 2] != 1) {
+            return true;
+        }
+
+        // Parte da esquerda
+        if (this.matrix[this.entities[i].posY][this.entities[i].posX - 1] != 1 || this.matrix[this.entities[i].posY][this.entities[i].posX - 2] != 1) {
+            return true;
+        }
+        return false;
+    }
+
+    optimizeGraphics() {
+        let inc = 10;
+        // console.log(this.matrix.length + " - " + height)
+        // console.log(this.matrix[0].length + " - " + width)
+
+        for (let i = 0; i < width - 1; i += inc) {
+            for (let j = 0; j < height - 1; j += inc) {
+                // fill(random(255, 0))
+                // rect(i, j, i + inc, j + inc)
+
+                let thereIsADiferent = false;
+                for (let k = i; k < i + inc; k++) {
+                    for (let l = j; l < j + inc; l++) {
+                        // console.log("k = " + k + "; l =" + l)
+                        if (l < height && k < width && this.matrix[l][k] != 1) {
+                            thereIsADiferent = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (thereIsADiferent) {
+                    fill(255, 0, 0, 10);
+                    // rect(i, j, i + inc, j + inc)
+                } else {
+                    fill(0, 255, 0, 100);
+                    //rect(i, j, i + inc, j + inc)
+
+                    for (let k = i; k < i + inc; k++) {
+                        for (let l = j; l < j + inc; l++) {
+                            // console.log("k = " + k + "; l =" + l)
+                            if (l < height && k < width) {
+                                // this.matrix[l][k]
+                                for (let m = 0; m < this.entities.length; m++) {
+                                    if (this.entities[m].posX == k && this.entities[m].posY === l) {
+                                        this.entities[m].needToDraw = false;
+                                    }
+                                }
+
+                            }
+                        }
+                    }
                 }
             }
-
-
         }
+        //pause = true;
     }
 
     addEntity(posX, posY, velX, velY, accX, accY, brushSize) {
@@ -67,15 +158,4 @@ class Population {
         // }
     }
 
-    checkBetween(x, oldY, newY) {
-        if (newY >= height) {
-            newY = height - 1;
-        }
-        for (let i = oldY + 1; i <= newY; i++) {
-            if (this.matrix[i][x] != 0) {
-                return i;
-            }
-        }
-        return false;
-    }
 }

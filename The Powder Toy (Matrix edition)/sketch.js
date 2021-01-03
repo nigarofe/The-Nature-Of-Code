@@ -17,6 +17,7 @@ function draw() {
         textSize(6);
         text(Math.round(frameRate()), 10, 10)
         text(("x = " + mouseX + "  y = " + mouseY), 10, 20)
+        text((frameCount), 30, 10)
     }
 
 }

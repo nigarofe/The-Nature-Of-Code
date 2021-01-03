@@ -6,10 +6,19 @@ class Entity {
         this.velY = velY;
         this.accX = accX;
         this.accY = accY;
+        this.active = true;
+        this.needToDraw = true;
     }
 
     draw() {
-        stroke(255);
-        point(this.posX, this.posY);
+        if (this.needToDraw) {
+            if (this.active) {
+                stroke(255);
+            } else {
+                stroke(127);
+            }
+
+            point(this.posX, this.posY);
+        }
     }
 }
