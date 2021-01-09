@@ -5,6 +5,13 @@
 - [ ] Multiple balls - weight, gravity, wind
 - [ ] Ventilador de bolinhas no chão - weight, mass, gravity, wind
 
+
+Percorrer uma matriz quase vazia é mais rápido do que percorrer um Array? // acho que não
+particlesMap -> classe separada
+Velocidade máxima = 1px/frame
+
+
+
 Usar biblioteca GPU.js
 Usar matriz
 Algoritmo genetetico: fazer MEDIA dos genes dos pais, não só escolher se o gene 32 vai ser do pai ou da mãe

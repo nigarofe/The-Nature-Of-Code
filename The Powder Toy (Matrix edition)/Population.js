@@ -27,7 +27,9 @@ class Population {
 
     render() {
         for (let i = 0; i < this.entities.length; i++) {
-            this.entities[i].draw();
+            if (isDrawing) {
+                this.entities[i].draw();
+            }
 
             this.entities[i].active = this.checkSides(i);
 

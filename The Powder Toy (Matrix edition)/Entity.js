@@ -3,7 +3,7 @@ class Entity {
         this.posX = posX;
         this.posY = posY;
         this.velX = velX;
-        // this.velY = velY;
+        this.velY = velY;
         this.velY = random(-10, -1);
         this.accX = accX;
         // this.accY = accY;
@@ -21,6 +21,7 @@ class Entity {
             // }
             stroke(255);
             point(this.posX, this.posY);
+            line()
         }
     }
 }
